@@ -2,7 +2,7 @@
 
 [TODO: This is where we will write a specification.]
 
-The SBOMit specification is licensed under [CC-Attribution-4.0-International](LICENSE.md).
+The SBOMit specification is licensed under the [Creative Commons Attribution 4.0 International Public License](LICENSE.md).
 
 # Meetings
 
