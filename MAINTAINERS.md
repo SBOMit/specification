@@ -9,7 +9,7 @@ Please see GOVERNANCE.md for the project's governance and maintainership.
   * PGP fingerprint: E9C0 59EC 0D32 64FA B35F  94AD 465B F9F6 F8EB 475A
     
 ## Ian Dunbar-Hall
-  * Email: 
+  * Email: ian.dunbar-hall@lmco.com
   * GitHub username: [@idunbarh](https://github.com/idunbarh)
 
 ## Cole Kennedy
