@@ -1,9 +1,11 @@
 # SBOMit Design Document
 
 ## What is SBOMit?
+
 SBOMit is the name of the project which manages the SBOMit specification format.   A SBOMit document is effectively an SBOM, only with additional verification information added that was generated at the time the supply chain was generated.  This verification information, which uses in-toto attestations and layouts, is able to be validated by a party to get a high degree of assurances about the software.
 
 ## What does a SBOMit document contain and why?
+
 A SBOMit document is a signed document that consists of a few different components.  
 
 First and foremost, it contains a series of in-toto attestations that were generated as the described software was created.  This includes detailed information about different steps of the software supply chain, including about the version control system, build process, unit testing, dependencies used, fuzzing, license compliance checks, packaging, etc.  For example, the build system used to compile the software in the SBOM has in-toto metadata with the names and secure hashes for the files that were taken from the VCS to be compiled, the names and secure hashes of the files created during compilation, a series of information about the compiler, and a signature by a private key held by the compiler.
@@ -14,13 +16,11 @@ The final item that always appears in the SBOMit document is the supplemental SB
 
 There is also a means to add addendums to an SBOMit document, which will be described later.
 
-
 ## What are the advantages of a SBOMit document over using a SBOM generation tool that scans the software?
 
 Scanning tools are by their nature looking at a piece of software and then trying to determine what happened before.  By their nature, they are imperfect because they use incomplete information to try to recover what happened in the past.  Practical use has shown that different scanning tools give wildly different results for the same software.  
 
 The in-toto attestation portions of an SBOMit document are generated at the time the software is being processed through the software supply chain.  As a result, this information will be much more accurate because in-toto attestations collect detailed information at the time the software product is being made.  This makes an SBOMit document much more accurate, by its nature.
-
 
 ## What are the advantages of a SBOMit document over simply signing an SBOM?
 
@@ -31,7 +31,6 @@ An SBOMit document contains cryptographically signed metadata about all of the s
 To use an analogy, an SBOM today is much like a list of ingredients on a product.  Only in practice, this information is commonly inaccurate, could be changed by a malicious party, and is not verified.   Signing an SBOM helps to stop it from being changed by a malicious party, so you know that the ingredient list you are getting was approved by a specific company.  A SBOMit document also describes in detail the process that went into making the product and has metadata and signatures from all the parties involved, including verification that the keys used were current at that time.  So, in the case of an SBOMit document, you have a high degree of assurance that the proper policies and procedures were followed.
 
 For more information on this topic, please see the [What advantages does in-toto provide] FAQ on the in-toto website.
-
 
 ## What if a software supply chain contains insecure steps?  
 
