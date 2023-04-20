@@ -2,7 +2,9 @@
 
 ## Introduction
 
-## Root of trust for layouts
+## Threat model
+
+### Root of trust for layouts
 
 ## Format/required fields
 
