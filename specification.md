@@ -191,7 +191,7 @@ TODO
 
 #### Overview
 
-A SIT is a valid SBOM (of any type), with the folloeing two constraints:
+A SIT is a valid SBOM (of any type), with the following two constraints:
 
 * it has a field indicating the SBOMit document that it was derived from.  
 
