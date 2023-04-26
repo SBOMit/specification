@@ -172,7 +172,7 @@ There are four items in a SBOMit document:
 
 * A collection of in-toto metadata.  This includes sub-layouts, link metadata,
   and attestations.  This must validate according to the in-toto layout and
-  so must be signed by the appropriate sub-layout creators and functionaries.
+  so must be signed by the appropriate functionaries and sub-layout creators.
 
 * The SBOM mutation.  This metadata describes how to mutate the SBOM
   information derived from the in-toto metadata.  It essentially serves to 
