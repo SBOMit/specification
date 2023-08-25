@@ -1,157 +1,99 @@
-# Creative Commons Attribution 4.0 International
+# Community Specification License 1.0
 
-Creative Commons Corporation (“Creative Commons”) is not a law firm and does not provide legal services or legal advice. Distribution of Creative Commons public licenses does not create a lawyer-client or other relationship. Creative Commons makes its licenses and related information available on an “as-is” basis. Creative Commons gives no warranties regarding its licenses, any material licensed under their terms and conditions, or any related information. Creative Commons disclaims all liability for damages resulting from their use to the fullest extent possible.
+**The Purpose of this License.**  This License sets forth the terms under which 1) Contributor will participate in and contribute to the development of specifications, standards, best practices, guidelines, and other similar materials under this Working Group, and 2) how the materials developed under this License may be used.  It is not intended for source code.  Capitalized terms are defined in the License’s last section.
 
-**Using Creative Commons Public Licenses**
+**1.	Copyright.**
 
-Creative Commons public licenses provide a standard set of terms and conditions that creators and other rights holders may use to share original works of authorship and other material subject to copyright and certain other rights specified in the public license below. The following considerations are for informational purposes only, are not exhaustive, and do not form part of our licenses.
+**1.1.	Copyright License.**  Contributor grants everyone a non-sublicensable, perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable (except as expressly stated in this License) copyright license, without any obligation for accounting, to reproduce, prepare derivative works of, publicly display, publicly perform, and distribute any materials it submits to the full extent of its copyright interest in those materials. Contributor also acknowledges that the Working Group may exercise copyright rights in the Specification, including the rights to submit the Specification to another standards organization.
 
-* __Considerations for licensors:__ Our public licenses are intended for use by those authorized to give the public permission to use material in ways otherwise restricted by copyright and certain other rights. Our licenses are irrevocable. Licensors should read and understand the terms and conditions of the license they choose before applying it. Licensors should also secure all rights necessary before applying our licenses so that the public can reuse the material as expected. Licensors should clearly mark any material not subject to the license. This includes other CC-licensed material, or material used under an exception or limitation to copyright. [More considerations for licensors](http://wiki.creativecommons.org/Considerations_for_licensors_and_licensees#Considerations_for_licensors).
+**1.2.	Copyright Attribution.**  As a condition, anyone exercising this copyright license must include attribution to the Working Group in any derivative work based on materials developed by the Working Group.  That attribution must include, at minimum, the material’s name, version number, and source from where the materials were retrieved.  Attribution is not required for implementations of the Specification.
 
-* __Considerations for the public:__ By using one of our public licenses, a licensor grants the public permission to use the licensed material under specified terms and conditions. If the licensor’s permission is not necessary for any reason–for example, because of any applicable exception or limitation to copyright–then that use is not regulated by the license. Our licenses grant only permissions under copyright and certain other rights that a licensor has authority to grant. Use of the licensed material may still be restricted for other reasons, including because others have copyright or other rights in the material. A licensor may make special requests, such as asking that all changes be marked or described. Although not required by our licenses, you are encouraged to respect those requests where reasonable. [More considerations for the public](http://wiki.creativecommons.org/Considerations_for_licensors_and_licensees#Considerations_for_licensees).
+**2.	Patents.**
 
-## Creative Commons Attribution 4.0 International Public License
+**2.1.	Patent License.**
 
-By exercising the Licensed Rights (defined below), You accept and agree to be bound by the terms and conditions of this Creative Commons Attribution 4.0 International Public License ("Public License"). To the extent this Public License may be interpreted as a contract, You are granted the Licensed Rights in consideration of Your acceptance of these terms and conditions, and the Licensor grants You such rights in consideration of benefits the Licensor receives from making the Licensed Material available under these terms and conditions.
+**2.1.1.	As a Result of Contributions.**
 
-### Section 1 – Definitions.
+**2.1.1.1.	As a Result of Contributions to Draft Specifications.**  Contributor grants Licensee a non-sublicensable, perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable (except as expressly stated in this License) license to its Necessary Claims in 1) Contributor’s Contributions and 2) to the Draft Specification that is within Scope as of the date of that Contribution, in both cases for Licensee’s Implementation of the Draft Specification, except for those patent claims excluded by Contributor under Section 3.  
 
-a. __Adapted Material__ means material subject to Copyright and Similar Rights that is derived from or based upon the Licensed Material and in which the Licensed Material is translated, altered, arranged, transformed, or otherwise modified in a manner requiring permission under the Copyright and Similar Rights held by the Licensor. For purposes of this Public License, where the Licensed Material is a musical work, performance, or sound recording, Adapted Material is always produced where the Licensed Material is synched in timed relation with a moving image.
+**2.1.1.2.	For Approved Specifications.**  Contributor grants Licensee a non-sublicensable, perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable (except as expressly stated in this License) license to its Necessary Claims included the Approved Specification that are within Scope for Licensee’s Implementation of the Approved Specification, except for those patent claims excluded by Contributor under Section 3.
 
-b. __Adapter's License__ means the license You apply to Your Copyright and Similar Rights in Your contributions to Adapted Material in accordance with the terms and conditions of this Public License.
+**2.1.2.	Patent Grant from Licensee.**  Licensee grants each other Licensee a non-sublicensable, perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable (except as expressly stated in this License) license to its Necessary Claims for its Implementation, except for those patent claims excluded under Section 3.
 
-c. __Copyright and Similar Rights__ means copyright and/or similar rights closely related to copyright including, without limitation, performance, broadcast, sound recording, and Sui Generis Database Rights, without regard to how the rights are labeled or categorized. For purposes of this Public License, the rights specified in Section 2(b)(1)-(2) are not Copyright and Similar Rights.
+**2.1.3.	Licensee Acceptance.**  The patent grants set forth in Section 2.1 extend only to Licensees that have indicated their agreement to this License as follows: 
 
-d. __Effective Technological Measures__ means those measures that, in the absence of proper authority, may not be circumvented under laws fulfilling obligations under Article 11 of the WIPO Copyright Treaty adopted on December 20, 1996, and/or similar international agreements.
+**2.1.3.1.	Source Code Distributions.**  For distribution in source code, by including this License in the root directory of the source code with the Implementation;
 
-e. __Exceptions and Limitations__ means fair use, fair dealing, and/or any other exception or limitation to Copyright and Similar Rights that applies to Your use of the Licensed Material.
+**2.1.3.2.	Non-Source Code Distributions.**  For distribution in any form other than source code, by including this License in the documentation, legal notices, via notice in the software, and/or other written materials provided with the Implementation; or
 
-f. __Licensed Material__ means the artistic or literary work, database, or other material to which the Licensor applied this Public License.
+**2.1.3.3.	Via Notices.md.**  By issuing pull request or commit to the Specification’s repository’s Notices.md file by the Implementer’s authorized representative, including the Implementer’s name, authorized individual and system identifier, and Specification version.
 
-g. __Licensed Rights__ means the rights granted to You subject to the terms and conditions of this Public License, which are limited to all Copyright and Similar Rights that apply to Your use of the Licensed Material and that the Licensor has authority to license.
+**2.1.4.	Defensive Termination.**  If any Licensee files or maintains a claim in a court asserting that a Necessary Claim is infringed by an Implementation, any licenses granted under this License to the Licensee are immediately terminated unless 1) that claim is directly in response to a claim against Licensee regarding an Implementation, or 2) that claim was brought to enforce the terms of this License, including intervention in a third-party action by a Licensee.
 
-h. __Licensor__ means the individual(s) or entity(ies) granting rights under this Public License.
+**2.1.5.	Additional Conditions.**  This License is not an assurance (i) that any of Contributor’s copyrights or issued patent claims cover an Implementation of the Specification or are enforceable or (ii) that an Implementation of the Specification would not infringe intellectual property rights of any third party.
 
-i. __Share__ means to provide material to the public by any means or process that requires permission under the Licensed Rights, such as reproduction, public display, public performance, distribution, dissemination, communication, or importation, and to make material available to the public including in ways that members of the public may access the material from a place and at a time individually chosen by them.
+**2.2.	Patent Licensing Commitment.**  In addition to the rights granted in Section 2.1, Contributor agrees to grant everyone a no charge, royalty-free license on reasonable and non-discriminatory terms to Contributor’s Necessary Claims that are within Scope for:
+1) Implementations of a Draft Specification, where such license applies only to those Necessary Claims infringed by implementing Contributor's Contribution(s) included in that Draft Specification, and
+2) Implementations of the Approved Specification. 
 
-j. __Sui Generis Database Rights__ means rights other than copyright resulting from Directive 96/9/EC of the European Parliament and of the Council of 11 March 1996 on the legal protection of databases, as amended and/or succeeded, as well as other essentially equivalent rights anywhere in the world.
+This patent licensing commitment does not apply to those claims subject to Contributor’s Exclusion Notice under Section 3.
 
-k. __You__ means the individual or entity exercising the Licensed Rights under this Public License. __Your__ has a corresponding meaning.
+**2.3.	Effect of Withdrawal.**  Contributor may withdraw from the Working Group by issuing a pull request or commit providing notice of withdrawal to the Working Group repository’s Notices.md file.  All of Contributor’s existing commitments and obligations with respect to the Working Group up to the date of that withdrawal notice will remain in effect, but no new obligations will be incurred. 
 
-### Section 2 – Scope.
+**2.4.	Binding Encumbrance.**  This License is binding on any future owner, assignee, or party who has been given the right to enforce any Necessary Claims against third parties.
 
-a. ___License grant.___
+**3.	Patent Exclusion.**
 
-   1. Subject to the terms and conditions of this Public License, the Licensor hereby grants You a worldwide, royalty-free, non-sublicensable, non-exclusive, irrevocable license to exercise the Licensed Rights in the Licensed Material to:
+**3.1.	As a Result of Contributions.**  Contributor may exclude Necessary Claims from its licensing commitments incurred under Section 2.1.1 by issuing an Exclusion Notice within 45 days of the date of that Contribution.  Contributor may not issue an Exclusion Notice for any material that has been included in a Draft Deliverable for more than 45 days prior to the date of that Contribution.
 
-       A. reproduce and Share the Licensed Material, in whole or in part; and
+**3.2.	As a Result of a Draft Specification Becoming an Approved Specification.**  Prior to the adoption of a Draft Specification as an Approved Specification, Contributor may exclude Necessary Claims from its licensing commitments under this Agreement by issuing an Exclusion Notice.  Contributor may not issue an Exclusion Notice for patents that were eligible to have been excluded pursuant to Section 3.1.
 
-       B. produce, reproduce, and Share Adapted Material.
+**4.	Source Code License.**  Any source code developed by the Working Group is solely subject the source code license included in the Working Group’s repository for that code.  If no source code license is included, the source code will be subject to the MIT License.
 
-   2. __Exceptions and Limitations.__ For the avoidance of doubt, where Exceptions and Limitations apply to Your use, this Public License does not apply, and You do not need to comply with its terms and conditions.
+**5.	No Other Rights.**  Except as specifically set forth in this License, no other express or implied patent, trademark, copyright, or other rights are granted under this License, including by implication, waiver, or estoppel.
 
-   3. __Term.__ The term of this Public License is specified in Section 6(a).
+**6.	Antitrust Compliance.**  Contributor acknowledge that it may compete with other participants in various lines of business and that it is therefore imperative that they and their respective representatives act in a manner that does not violate any applicable antitrust laws and regulations.  This License does not restrict any Contributor from engaging in similar specification development projects. Each Contributor may design, develop, manufacture, acquire or market competitive deliverables, products, and services, and conduct its business, in whatever way it chooses.  No Contributor is obligated to announce or market any products or services.  Without limiting the generality of the foregoing, the Contributors agree not to have any discussion relating to any product pricing, methods or channels of product distribution, division of markets, allocation of customers or any other topic that should not be discussed among competitors under the auspices of the Working Group.
 
-   4. __Media and formats; technical modifications allowed.__ The Licensor authorizes You to exercise the Licensed Rights in all media and formats whether now known or hereafter created, and to make technical modifications necessary to do so. The Licensor waives and/or agrees not to assert any right or authority to forbid You from making technical modifications necessary to exercise the Licensed Rights, including technical modifications necessary to circumvent Effective Technological Measures. For purposes of this Public License, simply making modifications authorized by this Section 2(a)(4) never produces Adapted Material.
+**7.	Non-Circumvention.**  Contributor agrees that it will not intentionally take or willfully assist any third party to take any action for the purpose of circumventing any obligations under this License.
 
-   5. __Downstream recipients.__
+**8.	Representations, Warranties and Disclaimers.**
 
-       A. __Offer from the Licensor – Licensed Material.__ Every recipient of the Licensed Material automatically receives an offer from the Licensor to exercise the Licensed Rights under the terms and conditions of this Public License.
+**8.1.  Representations, Warranties and Disclaimers.**  Contributor and Licensee represents and warrants that 1) it is legally entitled to grant the rights set forth in this License and 2) it will not intentionally include any third party materials in any Contribution unless those materials are available under terms that do not conflict with this License.  IN ALL OTHER RESPECTS ITS CONTRIBUTIONS ARE PROVIDED "AS IS." The entire risk as to implementing or otherwise using the Contribution or the Specification is assumed by the implementer and user. Except as stated herein, CONTRIBUTOR AND LICENSEE EXPRESSLY DISCLAIM ANY WARRANTIES (EXPRESS, IMPLIED, OR OTHERWISE), INCLUDING IMPLIED WARRANTIES OF MERCHANTABILITY, NON-INFRINGEMENT, FITNESS FOR A PARTICULAR PURPOSE, CONDITIONS OF QUALITY, OR TITLE, RELATED TO THE CONTRIBUTION OR THE SPECIFICATION.  IN NO EVENT WILL ANY PARTY BE LIABLE TO ANY OTHER PARTY FOR LOST PROFITS OR ANY FORM OF INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES OF ANY CHARACTER FROM ANY CAUSES OF ACTION OF ANY KIND WITH RESPECT TO THIS AGREEMENT, WHETHER BASED ON BREACH OF CONTRACT, TORT (INCLUDING NEGLIGENCE), OR OTHERWISE, AND WHETHER OR NOT THE OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. Any obligations regarding the transfer, successors in interest, or assignment of Necessary Claims will be satisfied if Contributor or Licensee notifies the transferee or assignee of any patent that it knows contains Necessary Claims or necessary claims under this License. Nothing in this License requires Contributor to undertake a patent search. If Contributor is 1) employed by or acting on behalf of an employer, 2) is making a Contribution under the direction or control of a third party, or 3) is making the Contribution as a consultant, contractor, or under another similar relationship with a third party, Contributor represents that they have been authorized by that party to enter into this License on its behalf.
 
-       B. __No downstream restrictions.__ You may not offer or impose any additional or different terms or conditions on, or apply any Effective Technological Measures to, the Licensed Material if doing so restricts exercise of the Licensed Rights by any recipient of the Licensed Material.
+**8.2.  Distribution Disclaimer.**  Any distributions of technical information to third parties must include a notice materially similar to the following: “THESE MATERIALS ARE PROVIDED “AS IS.” The Contributors and Licensees expressly disclaim any warranties (express, implied, or otherwise), including implied warranties of merchantability, non-infringement, fitness for a particular purpose, or title, related to the materials.  The entire risk as to implementing or otherwise using the materials is assumed by the implementer and user. IN NO EVENT WILL THE CONTRIBUTORS OR LICENSEES BE LIABLE TO ANY OTHER PARTY FOR LOST PROFITS OR ANY FORM OF INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES OF ANY CHARACTER FROM ANY CAUSES OF ACTION OF ANY KIND WITH RESPECT TO THIS DELIVERABLE OR ITS GOVERNING AGREEMENT, WHETHER BASED ON BREACH OF CONTRACT, TORT (INCLUDING NEGLIGENCE), OR OTHERWISE, AND WHETHER OR NOT THE OTHER MEMBER HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.”
 
-   6. __No endorsement.__ Nothing in this Public License constitutes or may be construed as permission to assert or imply that You are, or that Your use of the Licensed Material is, connected with, or sponsored, endorsed, or granted official status by, the Licensor or others designated to receive attribution as provided in Section 3(a)(1)(A)(i).
+**9.	Definitions.**
 
-b. ___Other rights.___
+**9.1.	Affiliate.** “Affiliate” means an entity that directly or indirectly Controls, is Controlled by, or is under common Control of that party.
 
-   1. Moral rights, such as the right of integrity, are not licensed under this Public License, nor are publicity, privacy, and/or other similar personality rights; however, to the extent possible, the Licensor waives and/or agrees not to assert any such rights held by the Licensor to the limited extent necessary to allow You to exercise the Licensed Rights, but not otherwise.
+**9.2.	Approved Specification.**  “Approved Specification” means the final version and contents of any Draft Specification designated as an Approved Specification as set forth in the accompanying Governance.md file.
 
-   2. Patent and trademark rights are not licensed under this Public License.
+**9.3.	Contribution.**  “Contribution” means any original work of authorship, including any modifications or additions to an existing work, that Contributor submits for inclusion in a Draft Specification, which is included in a Draft Specification or Approved Specification.
 
-   3. To the extent possible, the Licensor waives any right to collect royalties from You for the exercise of the Licensed Rights, whether directly or through a collecting society under any voluntary or waivable statutory or compulsory licensing scheme. In all other cases the Licensor expressly reserves any right to collect such royalties.
+**9.4.	Contributor.** “Contributor” means any person or entity that has indicated its acceptance of the License 1) by making a Contribution to the Specification, or 2) by entering into the Community Specification Contributor License Agreement for the Specification.  Contributor includes its Affiliates, assigns, agents, and successors in interest.
 
-### Section 3 – License Conditions.
+**9.5.	Control.**  “Control” means direct or indirect control of more than 50% of the voting power to elect directors of that corporation, or for any other entity, the power to direct management of such entity.
 
-Your exercise of the Licensed Rights is expressly made subject to the following conditions.
+**9.6.	Draft Specification.**  “Draft Specification” means all versions of the material (except an Approved Specification) developed by this Working Group for the purpose of creating, commenting on, revising, updating, modifying, or adding to any document that is to be considered for inclusion in the Approved Specification. 
 
-a. ___Attribution.___
+**9.7.	Exclusion Notice.**  “Exclusion Notice” means a written notice made by making a pull request or commit to the repository’s Notices.md file that identifies patents that Contributor is excluding from its patent licensing commitments under this License.  The Exclusion Notice for issued patents and published applications must include the Draft Specification’s name, patent number(s) or title and application number(s), as the case may be, for each of the issued patent(s) or pending patent application(s) that the Contributor is excluding from the royalty-free licensing commitment set forth in this License.  If an issued patent or pending patent application that may contain Necessary Claims is not set forth in the Exclusion Notice, those Necessary Claims shall continue to be subject to the licensing commitments under this License.  The Exclusion Notice for unpublished patent applications must provide either: (i) the text of the filed application; or (ii) identification of the specific part(s) of the Draft Specification whose implementation makes the excluded claim a Necessary Claim.  If (ii) is chosen, the effect of the exclusion will be limited to the identified part(s) of the Draft Specification.
 
-   1. If You Share the Licensed Material (including in modified form), You must:
+**9.8.	Implementation.**  “Implementation” means making, using, selling, offering for sale, importing or distributing any implementation of the Specification 1) only to the extent it implements the Specification and 2) so long as all required portions of the Specification are implemented.
 
-       A. retain the following if it is supplied by the Licensor with the Licensed Material:
+**9.9.	License.**  “License” means this Community Specification License.
 
-         i. identification of the creator(s) of the Licensed Material and any others designated to receive attribution, in any reasonable manner requested by the Licensor (including by pseudonym if designated);
+**9.10.	Licensee.**  “Licensee” means any person or entity that has indicated its acceptance of the License as set forth in Section 2.1.3.  Licensee includes its Affiliates, assigns, agents, and successors in interest.
 
-         ii. a copyright notice;
+**9.11.	Necessary Claims.**  “Necessary Claims” are those patent claims, if any, that a party owns or controls, including those claims later acquired, that are necessary to implement the required portions (including the required elements of optional portions) of the Specification that are described in detail and not merely referenced in the Specification.
 
-         iii. a notice that refers to this Public License;
+**9.12.	Specification.**  “Specification” means a Draft Specification or Approved Specification included in the Working Group’s repository subject to this License, and the version of the Specification implemented by the Licensee.
 
-         iv. a notice that refers to the disclaimer of warranties;
+**9.13.	Scope.**  “Scope” has the meaning as set forth in the accompanying Scope.md file included in this Specification’s repository. Changes to Scope do not apply retroactively.  If no Scope is provided, each Contributor’s Necessary Claims are limited to that Contributor’s Contributions.
 
-         v. a URI or hyperlink to the Licensed Material to the extent reasonably practicable;
+**9.14.	Working Group.**  “Working Group” means this project to develop specifications, standards, best practices, guidelines, and other similar materials under this License.
 
-       B. indicate if You modified the Licensed Material and retain an indication of any previous modifications; and
 
-       C. indicate the Licensed Material is licensed under this Public License, and include the text of, or the URI or hyperlink to, this Public License.
 
-   2. You may satisfy the conditions in Section 3(a)(1) in any reasonable manner based on the medium, means, and context in which You Share the Licensed Material. For example, it may be reasonable to satisfy the conditions by providing a URI or hyperlink to a resource that includes the required information.
+*The text of this Community Specification License is Copyright 2020 Joint Development Foundation and is licensed under the Creative Commons Attribution 4.0 International License available at https://creativecommons.org/licenses/by/4.0/.*
 
-   3. If requested by the Licensor, You must remove any of the information required by Section 3(a)(1)(A) to the extent reasonably practicable.
-
-   4. If You Share Adapted Material You produce, the Adapter's License You apply must not prevent recipients of the Adapted Material from complying with this Public License.
-
-### Section 4 – Sui Generis Database Rights.
-
-Where the Licensed Rights include Sui Generis Database Rights that apply to Your use of the Licensed Material:
-
-a. for the avoidance of doubt, Section 2(a)(1) grants You the right to extract, reuse, reproduce, and Share all or a substantial portion of the contents of the database;
-
-b. if You include all or a substantial portion of the database contents in a database in which You have Sui Generis Database Rights, then the database in which You have Sui Generis Database Rights (but not its individual contents) is Adapted Material; and
-
-c. You must comply with the conditions in Section 3(a) if You Share all or a substantial portion of the contents of the database.
-
-For the avoidance of doubt, this Section 4 supplements and does not replace Your obligations under this Public License where the Licensed Rights include other Copyright and Similar Rights.
-
-### Section 5 – Disclaimer of Warranties and Limitation of Liability.
-
-a. __Unless otherwise separately undertaken by the Licensor, to the extent possible, the Licensor offers the Licensed Material as-is and as-available, and makes no representations or warranties of any kind concerning the Licensed Material, whether express, implied, statutory, or other. This includes, without limitation, warranties of title, merchantability, fitness for a particular purpose, non-infringement, absence of latent or other defects, accuracy, or the presence or absence of errors, whether or not known or discoverable. Where disclaimers of warranties are not allowed in full or in part, this disclaimer may not apply to You.__
-
-b. __To the extent possible, in no event will the Licensor be liable to You on any legal theory (including, without limitation, negligence) or otherwise for any direct, special, indirect, incidental, consequential, punitive, exemplary, or other losses, costs, expenses, or damages arising out of this Public License or use of the Licensed Material, even if the Licensor has been advised of the possibility of such losses, costs, expenses, or damages. Where a limitation of liability is not allowed in full or in part, this limitation may not apply to You.__
-
-c. The disclaimer of warranties and limitation of liability provided above shall be interpreted in a manner that, to the extent possible, most closely approximates an absolute disclaimer and waiver of all liability.
-
-### Section 6 – Term and Termination.
-
-a. This Public License applies for the term of the Copyright and Similar Rights licensed here. However, if You fail to comply with this Public License, then Your rights under this Public License terminate automatically.
-
-b. Where Your right to use the Licensed Material has terminated under Section 6(a), it reinstates:
-
-   1. automatically as of the date the violation is cured, provided it is cured within 30 days of Your discovery of the violation; or
-
-   2. upon express reinstatement by the Licensor.
-
-   For the avoidance of doubt, this Section 6(b) does not affect any right the Licensor may have to seek remedies for Your violations of this Public License.
-
-c. For the avoidance of doubt, the Licensor may also offer the Licensed Material under separate terms or conditions or stop distributing the Licensed Material at any time; however, doing so will not terminate this Public License.
-
-d. Sections 1, 5, 6, 7, and 8 survive termination of this Public License.
-
-### Section 7 – Other Terms and Conditions.
-
-a. The Licensor shall not be bound by any additional or different terms or conditions communicated by You unless expressly agreed.
-
-b. Any arrangements, understandings, or agreements regarding the Licensed Material not stated herein are separate from and independent of the terms and conditions of this Public License.
-
-### Section 8 – Interpretation.
-
-a. For the avoidance of doubt, this Public License does not, and shall not be interpreted to, reduce, limit, restrict, or impose conditions on any use of the Licensed Material that could lawfully be made without permission under this Public License.
-
-b. To the extent possible, if any provision of this Public License is deemed unenforceable, it shall be automatically reformed to the minimum extent necessary to make it enforceable. If the provision cannot be reformed, it shall be severed from this Public License without affecting the enforceability of the remaining terms and conditions.
-
-c. No term or condition of this Public License will be waived and no failure to comply consented to unless expressly agreed to by the Licensor.
-
-d. Nothing in this Public License constitutes or may be interpreted as a limitation upon, or waiver of, any privileges and immunities that apply to the Licensor or You, including from the legal processes of any jurisdiction or authority.
-
-> Creative Commons is not a party to its public licenses. Notwithstanding, Creative Commons may elect to apply one of its public licenses to material it publishes and in those instances will be considered the “Licensor.” Except for the limited purpose of indicating that material is shared under a Creative Commons public license or as otherwise permitted by the Creative Commons policies published at [creativecommons.org/policies](http://creativecommons.org/policies), Creative Commons does not authorize the use of the trademark “Creative Commons” or any other trademark or logo of Creative Commons without its prior written consent including, without limitation, in connection with any unauthorized modifications to any of its public licenses or any other arrangements, understandings, or agreements concerning use of licensed material. For the avoidance of doubt, this paragraph does not form part of the public licenses.
->
-> Creative Commons may be contacted at creativecommons.org
+SPDX-License-Identifier: CC-BY-4.0
