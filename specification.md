@@ -255,19 +255,64 @@ Stable State: In-toto verification will run every time a release is performed. T
 
 ## 3 The Final Product
 
-The final product is the bundle of a series of in-toto attestations, a complete (standard) in-toto layout, and any additional supplemental information that may be required.
+The final product is the bundle of a series of in-toto attestations, a complete (standard) in-toto layout, and any additional supplemental information that may be required. This bundle is called a SIT and can be represented can be represented in different Software Bill of Materials formats and versions, but must represent or link to the required data in a consistent fields that can clearly mapped to existing and future Software Bill of Materials formats.
 
-### 3.1 Contents
+There are two required fields independent of SBOM format:
+* __Hashes__ Sha256 hashes for every component matching hashes used in in-toto link attestations
+* __Annotations/Properties__ or __External References__ to in-toto attestations, in-toto layout, and additional supplemental information
 
-#### 3.1.1 in-toto attestations
+### 3.1 Software Bill of Material Fields
 
-Primarily, the bundle encompasses a sequence of in-toto attestations, each of which is generated throughout the creation of the described software. These attestations provide a granular view into different stages of the software supply chain, which could include elements such as version control system, build process, unit testing, dependencies, fuzzing, license compliance checks, and packaging among others. For instance, an in-toto attestation for the build system used to compile the software in the SBOM might comprise the names and secure hashes of files sourced from the VCS for compilation, the names and secure hashes of files generated during the compilation process, comprehensive data about the compiler, and a signature endorsed by the compiler's private key.  
+#### 3.1.1 __Hashes__ Field
 
-#### 3.1.2 in-toto layout
+Components are identified through sha256 hashes. To allow tracability between components, in-toto attestations, and other metadata
+
+* The specification shall require all components to have hashes.
+* The specification shall use component hashes using sha256 to match the [in-toto attestation specification](https://github.com/in-toto/specification/blob/v1.0/in-toto-spec.md#423-hash-object-format).
+
+#### 3.1.1.1 CycloneDX 1.2 - latest
+
+CycloneDX has support for hashes in sha256 for versions `1.2` - `latest`. The declared `alg` needs to be `SHA-256` and the `content` needs be the sha256 content of the component. This checksum must match the hashes used in the in-toto link attestations.
+
+* `metadata.component.hashes[]`
+  * `alg: SHA-256`
+  * `content: <component hash>`
+* `components[].hashes[]`
+  * `alg: SHA-256`
+  * `content: <component hash>`
+
+#### 3.1.1.1 SPDX 2.3
+
+SPDX has support for hashes (checksums) in SPDX `2.3`. The declared `algorithm` needs to be `SHA256` and the `checksumValue` needs to be the sha256 content of the component. This checksum must match the hashes used in the in-toto link attestations.
+
+* `packages[].checksums[]`
+  * `algorithm: SHA256`
+  * `checksumValue: <component hash>`
+
+#### 3.1.1.1 SPDX 3.0
+
+SPDX has support for hashes (checksums) in SPDX `3.0`. The declared `checksum` needs to use the sha256 algorithm. This checksum must match the hashes used in the in-toto link attestations.
+
+* `components[]`
+  * `checksum: sha256:<component hash>`
+
+#### 3.1.1 __Annotations/Properties__ Field
+
+Components 
+
+### 3.2 Contents
+
+#### 3.2.1 in-toto attestations
+
+Primarily, the bundle encompasses a sequence of in-toto attestations, each of which is generated throughout the creation of the described software. These attestations provide a granular view into different stages of the software supply chain, which could include elements such as version control system, build process, unit testing, dependencies, fuzzing, license compliance checks, and packaging among others. For instance, an in-toto attestation for the build system used to compile the software in the SBOM might comprise the names and secure hashes of files sourced from the VCS for compilation, the names and secure hashes of files generated during the compilation process, comprehensive data about the compiler, and a signature endorsed by the compiler's private key.
+
+
+
+#### 3.2.2 in-toto layout
 
 Working in tandem with these attestations is the in-toto layout, another key component in the SBOMit document. Authenticated by the project owner's signature, the layout provides a blueprint of what constitutes valid attestation metadata for the project. It stipulates the private keys for entities performing the attestations and elucidates the interconnections between different steps. This means it could specify, for example, that a signed git tag from the VCS should be the basis for the build system's operation, and that the files compiled by this system should be the same ones subjected to unit tests, all of which must be passed. Crucially, an in-toto layout translates to a machine-readable policy capable of validating in-toto attestations, thereby ensuring every stipulated step was executed in the right sequence, on the correct items, and without any steps being skipped, added, or omitted.  
 
-#### 3.1.3 Additional supplemental information
+#### 3.2.3 Additional supplemental information
 
 Finally, the SBOMit document includes supplemental SBOM information. Together with the in-toto attestations and layout, this information can be utilized to generate a final SBOM in a variety of formats. The supplemental SBOM data might encompass details such as the company name and other specifics that aren't incorporated in-toto but are nonetheless relevant for inclusion in the resultant SBOM. Thus, an SBOM derived from an SBOMit document can feature supplementary data that wasn't part of the in-toto procedure.
 
