@@ -257,17 +257,17 @@ Stable State: In-toto verification will run every time a release is performed. T
 
 The final product is the bundle of a series of in-toto attestations, a complete (standard) in-toto layout, and any additional supplemental information that may be required. This bundle is called a SIT and can be represented can be represented in different Software Bill of Materials formats and versions, but must represent or link to the required data in a consistent fields that can clearly mapped to existing and future Software Bill of Materials formats.
 
-### 3.2 Contents
+### 3.1 Contents
 
-#### 3.2.1 in-toto attestations
+#### 3.1.1 in-toto attestations
 
 Primarily, the bundle encompasses a sequence of in-toto attestations, each of which is generated throughout the creation of the described software. These attestations provide a granular view into different stages of the software supply chain, which could include elements such as version control system, build process, unit testing, dependencies, fuzzing, license compliance checks, and packaging among others. For instance, an in-toto attestation for the build system used to compile the software in the SBOM might comprise the names and secure hashes of files sourced from the VCS for compilation, the names and secure hashes of files generated during the compilation process, comprehensive data about the compiler, and a signature endorsed by the compiler's private key.
 
-#### 3.2.2 in-toto layout
+#### 3.1.2 in-toto layout
 
 Working in tandem with these attestations is the in-toto layout, another key component in the SBOMit document. Authenticated by the project owner's signature, the layout provides a blueprint of what constitutes valid attestation metadata for the project. It stipulates the private keys for entities performing the attestations and elucidates the interconnections between different steps. This means it could specify, for example, that a signed git tag from the VCS should be the basis for the build system's operation, and that the files compiled by this system should be the same ones subjected to unit tests, all of which must be passed. Crucially, an in-toto layout translates to a machine-readable policy capable of validating in-toto attestations, thereby ensuring every stipulated step was executed in the right sequence, on the correct items, and without any steps being skipped, added, or omitted.  
 
-#### 3.2.3 Additional supplemental information
+#### 3.1.3 Additional supplemental information
 
 Finally, the SBOMit document includes supplemental SBOM information. Together with the in-toto attestations and layout, this information can be utilized to generate a final SBOM in a variety of formats. The supplemental SBOM data might encompass details such as the company name and other specifics that aren't incorporated in-toto but are nonetheless relevant for inclusion in the resultant SBOM. Thus, an SBOM derived from an SBOMit document can feature supplementary data that wasn't part of the in-toto procedure.
 
