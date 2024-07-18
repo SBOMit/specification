@@ -15,12 +15,14 @@ Please see GOVERNANCE.md for the project's governance and maintainership.
 ## Cole Kennedy
   * Email: colek42@gmail.com
   * GitHub username: [@colek42](https://github.com/colek42)
-    
-## Trishank Karthik Kuppusamy
-  * Email: trishank.kuppusamy@datadoghq.com
-  * GitHub username: [@trishankatdatadog](https://github.com/trishankatdatadog)
-  * Keybase: [@trishankatdatadog](https://keybase.io/trishankdatadog)
 
 ## Marina Moore
   * Email: mm9693@nyu.edu
   * GitHub username: [@mnm678](https://github.com/mnm678)
+
+# Emeritus
+
+## Trishank Karthik Kuppusamy
+  * Email: trishank.kuppusamy@datadoghq.com
+  * GitHub username: [@trishankatdatadog](https://github.com/trishankatdatadog)
+  * Keybase: [@trishankatdatadog](https://keybase.io/trishankdatadog)
