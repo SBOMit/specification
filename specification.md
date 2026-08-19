@@ -286,6 +286,39 @@ There are four items in a SBOMit document:
 
 ![Detailed format](images/image2.png)
 
+#### 5.2.3 Standard Attestation Types
+
+The collection of in-toto metadata described in §5.2.1 must include attestations covering the following five categories of build evidence for each supply chain step they're applicable for, and must be bound to a step either as a `link` or as a part of a signed collection. Of these, files opened are mandatory information since they form the basis of package identities. A category may be satisfied by any attestation predicate that carries the required fields for each of these categories.
+
+1. **Materials**: the set of files present in the working directory prior to step execution.
+   Required fields, per file: file paths with a secure, collision-resistant hash of the file's contents.
+
+2. **Products**: the set of files present as output of a step after its execution.
+   Required fields, per file: file path with a secure hash of the file's contents.
+
+3. **Process execution**: processes spawned during a step.
+   Required fields, per process: binary path, arguments, exit status.
+
+4. **Files opened**: files opened by processes spawned during a step, distinct from that step's declared materials/products.
+   Required fields, per opened file: its path and a secure hash. Where the tracing mechanism cannot resolve a hash for an opened file, the path MUST still be recorded.
+
+5. **Network access**: outbound network requests made during a step.
+   Required fields: destination host and port, and protocol. Where recoverable (e.g., via TLS-terminating interception), the specific resource requested such as a package registry URL or path.
+
+These are intentionally not tied to one predicate schema. A reference implementation is [witness](https://github.com/in-toto/witness) which has individual attestors and schemas for `material`, `product`, `command-run`, and `network-trace`. An alternate schema could bundle multiple categories together such as the [runtime-trace](https://github.com/in-toto/attestation/blob/main/spec/predicates/runtime-trace.md) predicate. Conversely, a single observation may appear in more than one attestation. Tooling that consumes these attestations may deduplicate overlapping observations.
+
+**Recognized predicate types.** So that a verifier can convert in-toto attestations to these required evidence categories, the following `predicateTypes` are recognized as satisfying these categories. This list can be extended later.
+
+| `predicateType`                               | Materials | Products | Process execution | Files opened | Network access |
+| --------------------------------------------- | :-------: | :------: | :---------------: | :----------: | :------------: |
+| `witness.dev/attestations/material/v0.1`      |     X     |          |                   |              |                |
+| `witness.dev/attestations/product/v0.1`       |           |    X     |                   |              |                |
+| `witness.dev/attestations/command-run/v0.1`   |           |          |         X         |     X\*      |                |
+| `witness.dev/attestations/network-trace/v0.1` |           |          |                   |              |       X        |
+| `in-toto.io/attestation/runtime-trace/v0.1`   |     X     |          |         X         |      X       |       X        |
+
+\*: `command-run/v0.1` only provides information about files opened through the optional `processes[].openedfiles` field.
+
 ## 6 Attestation Generation
 
 TODO…
@@ -298,7 +331,7 @@ There are two main workflows for SBOMit documents and SITs: generation and verif
 
 #### 7.1.1 SBOMit document
 
-To generate a SBOMit document, one must generate the constituent parts. For the in-toto layouts, sub-layouts, attestations, and links, this process is described in the in-toto project's documentation. Note, however, that for the purposes of SBOMit, the layout is required to include certain information such as, … so that this information may be used to populate the SIT.
+To generate a SBOMit document, one must generate the constituent parts. For the in-toto layouts, sub-layouts, attestations, and links, this process is described in the in-toto project's documentation. Note, however, that for the purposes of SBOMit, the layout's `expected_materials`, `expected_products`, and `expected_command` fields for each step also determine which of the standard attestation categories defined in §5.2.3 are expected from that step's functionary, including files opened wherever `expected_command` is set. As of now, network-access attestations are considered supplementary and not declared by the layout. This information is used to populate the SIT.
 
 Generating the mutator by hand may be done by starting with a null mutator and then using tooling to generate a SIT in the correct format. The SIT file may be modified and the JSON diff may be computed.
 
