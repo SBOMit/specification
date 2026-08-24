@@ -257,23 +257,9 @@ Stable State: In-toto verification will run every time a release is performed. T
 
 The final product is the bundle of a series of in-toto attestations, a complete (standard) in-toto layout, and any additional supplemental information that may be required.
 
-### 5.1 Contents
+### 5.1 SBOMit Document
 
-#### 5.1.1 in-toto attestations
-
-Primarily, the bundle encompasses a sequence of in-toto attestations, each of which is generated throughout the creation of the described software. These attestations provide a granular view into different stages of the software supply chain, which could include elements such as version control system, build process, unit testing, dependencies, fuzzing, license compliance checks, and packaging among others. For instance, an in-toto attestation for the build system used to compile the software in the SBOM might comprise the names and secure hashes of files sourced from the VCS for compilation, the names and secure hashes of files generated during the compilation process, comprehensive data about the compiler, and a signature endorsed by the compiler's private key.
-
-#### 5.1.2 in-toto layout
-
-Working in tandem with these attestations is the in-toto layout, another key component in the SBOMit document. Authenticated by the project owner's signature, the layout provides a blueprint of what constitutes valid attestation metadata for the project. It stipulates the private keys for entities performing the attestations and elucidates the interconnections between different steps. This means it could specify, for example, that a signed git tag from the VCS should be the basis for the build system's operation, and that the files compiled by this system should be the same ones subjected to unit tests, all of which must be passed. Crucially, an in-toto layout translates to a machine-readable policy capable of validating in-toto attestations, thereby ensuring every stipulated step was executed in the right sequence, on the correct items, and without any steps being skipped, added, or omitted.
-
-#### 5.1.3 Additional supplemental information
-
-Finally, the SBOMit document includes supplemental SBOM information. Together with the in-toto attestations and layout, this information can be utilized to generate a final SBOM in a variety of formats. The supplemental SBOM data might encompass details such as the company name and other specifics that aren't incorporated in-toto but are nonetheless relevant for inclusion in the resultant SBOM. Thus, an SBOM derived from an SBOMit document can feature supplementary data that wasn't part of the in-toto procedure.
-
-### 5.2 SBOMit Document
-
-#### 5.2.1 Overview
+#### 5.1.1 Overview
 
 There are four items in a SBOMit document:
 
@@ -282,7 +268,7 @@ There are four items in a SBOMit document:
 - The SBOM mutation. This metadata describes how to mutate the SBOM information derived from the in-toto metadata. It essentially serves to flesh out the derived SBOM to make it more complete that what can be strictly verified. This is in ISO or JSON patch format.
 - Zero or more addendums. These are represented as diffs to the prior sections of the document. It enables one to easily append or modify information while retaining historical information. These are also in JSON patch format.
 
-#### 5.2.2 Detailed format
+#### 5.1.2 Detailed format
 
 The four items in §5.2.1 are bundled as a single JSON document:
 
@@ -312,11 +298,11 @@ The four items in §5.2.1 are bundled as a single JSON document:
 ```
 
 - `mutation` and each entry of `addendums` are RFC 6902 JSON Patch documents, per §5.2.1's "JSON patch format" requirement.
-- `sbomitVersion` is the only field not directly implied by §5.2.1 — it lets a parser identify which revision of this document format it is reading.
+- `sbomitVersion` is the only field not directly implied by §5.1.1 — it lets a parser identify which revision of this document format it is reading.
 
-#### 5.2.3 Standard Attestation Types
+#### 5.1.3 Standard Attestation Types
 
-The collection of in-toto metadata described in §5.2.1 should include attestations covering the following five categories of build evidence for each supply chain step they're applicable for, and must be bound to a step either as a `link` or as a part of a signed collection:
+The collection of in-toto metadata described in §5.1.1 should include attestations covering the following five categories of build evidence for each supply chain step they're applicable for, and must be bound to a step either as a `link` or as a part of a signed collection:
 
 1. **Materials**: the set of files present in the working directory prior to step execution.
    Required fields, per file: file paths with a secure, collision-resistant hash of the file's contents.
@@ -352,6 +338,10 @@ A category may be satisfied by any attestation predicate that carries the requir
 
 \*\*: `attestation-collection/v0.1` is a container predicate that holds a list of sub-attestations through the `predicate.attestations[]` field, each of which have their own type field that can be used to satisfy a class of evidence. e.g. `attestation-collection.predicate.attestations[]` having as a member an attestation of type `https://witness.dev/attestations/material/v0.1`. A verifier must therefore recurse into this array to accept/reject the sub-attestations.
 
+### 5.2 SIT
+
+TODO...
+
 ## 6 Attestation Generation
 
 TODO…
@@ -364,7 +354,7 @@ There are two main workflows for SBOMit documents and SITs: generation and verif
 
 #### 7.1.1 SBOMit document
 
-To generate a SBOMit document, one must generate the constituent parts. For the in-toto layouts, sub-layouts, attestations, and links, this process is described in the in-toto project's documentation. Note, however, that for the purposes of SBOMit, the layout's `expected_materials`, `expected_products`, and `expected_command` fields for each step also determine which of the standard attestation categories defined in §5.2.3 are expected from that step's functionary, including files opened wherever `expected_command` is set. As of now, network-access attestations are considered supplementary and not declared by the layout. This information is used to populate the SIT.
+To generate a SBOMit document, one must generate the constituent parts. For the in-toto layouts, sub-layouts, attestations, and links, this process is described in the in-toto project's documentation. Note, however, that for the purposes of SBOMit, the layout's `expected_materials`, `expected_products`, and `expected_command` fields for each step also determine which of the standard attestation categories defined in §5.1.3 are expected from that step's functionary, including files opened wherever `expected_command` is set. As of now, network-access attestations are considered supplementary and not declared by the layout. This information is used to populate the SIT.
 
 Generating the mutator by hand may be done by starting with a null mutator and then using tooling to generate a SIT in the correct format. The SIT file may be modified and the JSON diff may be computed.
 
@@ -390,10 +380,6 @@ A SIT is a valid SBOM (of any type), with the following two constraints:
 
 - it has a field indicating the SBOMit document that it was derived from.
 - it is signed by the functionary key listed in the related step of the in-toto layout
-
-#### 8.1.2 Detailed format
-
-TODO…
 
 ### 8.2 Verification
 
