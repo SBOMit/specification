@@ -284,11 +284,39 @@ There are four items in a SBOMit document:
 
 #### 5.2.2 Detailed format
 
-![Detailed format](images/image2.png)
+The four items in §5.2.1 are bundled as a single JSON document:
+
+```json
+{
+  "sbomitVersion": "0.3.0",
+  "layout": {
+    "payloadType": "application/vnd.in-toto+json",
+    "payload": "<base64: in-toto layout, signed by the layout key>",
+    "signatures": [{ "keyid": "<layout-owner-keyid>", "sig": "..." }]
+  },
+  "attestations": [
+    {
+      "payloadType": "application/vnd.in-toto+json",
+      "payload": "<base64: in-toto Statement, e.g. a witness attestation-collection>",
+      "signatures": [{ "keyid": "<step-functionary-keyid>", "sig": "..." }]
+    }
+  ],
+  "mutation": {
+    "format": "json-patch",
+    "patch": [
+      { "op": "add", "path": "/metadata/supplier", "value": "Example Corp" }
+    ]
+  },
+  "addendums": []
+}
+```
+
+- `mutation` and each entry of `addendums` are RFC 6902 JSON Patch documents, per §5.2.1's "JSON patch format" requirement.
+- `sbomitVersion` is the only field not directly implied by §5.2.1 — it lets a parser identify which revision of this document format it is reading.
 
 #### 5.2.3 Standard Attestation Types
 
-The collection of in-toto metadata described in §5.2.1 must include attestations covering the following five categories of build evidence for each supply chain step they're applicable for, and must be bound to a step either as a `link` or as a part of a signed collection. Of these, files opened are mandatory information since they form the basis of package identities. A category may be satisfied by any attestation predicate that carries the required fields for each of these categories.
+The collection of in-toto metadata described in §5.2.1 should include attestations covering the following five categories of build evidence for each supply chain step they're applicable for, and must be bound to a step either as a `link` or as a part of a signed collection:
 
 1. **Materials**: the set of files present in the working directory prior to step execution.
    Required fields, per file: file paths with a secure, collision-resistant hash of the file's contents.
@@ -305,19 +333,24 @@ The collection of in-toto metadata described in §5.2.1 must include attestation
 5. **Network access**: outbound network requests made during a step.
    Required fields: destination host and port, and protocol. Where recoverable (e.g., via TLS-terminating interception), the specific resource requested such as a package registry URL or path.
 
-These are intentionally not tied to one predicate schema. A reference implementation is [witness](https://github.com/in-toto/witness) which has individual attestors and schemas for `material`, `product`, `command-run`, and `network-trace`. An alternate schema could bundle multiple categories together such as the [runtime-trace](https://github.com/in-toto/attestation/blob/main/spec/predicates/runtime-trace.md) predicate. Conversely, a single observation may appear in more than one attestation. Tooling that consumes these attestations may deduplicate overlapping observations.
+Of these, providing the set of opened files is mandatory since they form the basis of package identities.
+
+A category may be satisfied by any attestation predicate that carries the required fields for each of these categories. These are intentionally not tied to one predicate schema. A reference implementation is [witness](https://github.com/in-toto/witness) which has individual attestors and schemas for `material`, `product`, `command-run`, and `network-trace`. An alternate schema could bundle multiple categories together such as the [runtime-trace](https://github.com/in-toto/attestation/blob/main/spec/predicates/runtime-trace.md) predicate. Conversely, a single observation may appear in more than one attestation. Tooling that consumes these attestations may deduplicate overlapping observations.
 
 **Recognized predicate types.** So that a verifier can convert in-toto attestations to these required evidence categories, the following `predicateTypes` are recognized as satisfying these categories. This list can be extended later.
 
-| `predicateType`                               | Materials | Products | Process execution | Files opened | Network access |
-| --------------------------------------------- | :-------: | :------: | :---------------: | :----------: | :------------: |
-| `witness.dev/attestations/material/v0.1`      |     X     |          |                   |              |                |
-| `witness.dev/attestations/product/v0.1`       |           |    X     |                   |              |                |
-| `witness.dev/attestations/command-run/v0.1`   |           |          |         X         |     X\*      |                |
-| `witness.dev/attestations/network-trace/v0.1` |           |          |                   |              |       X        |
-| `in-toto.io/attestation/runtime-trace/v0.1`   |     X     |          |         X         |      X       |       X        |
+| `predicateType`                                      | Materials | Products | Process execution | Files opened | Network access |
+| ---------------------------------------------------- | :-------: | :------: | :---------------: | :----------: | :------------: |
+| `witness.dev/attestations/material/v0.1`             |     X     |          |                   |              |                |
+| `witness.dev/attestations/product/v0.1`              |           |    X     |                   |              |                |
+| `witness.dev/attestations/command-run/v0.1`          |           |          |         X         |     X\*      |                |
+| `witness.dev/attestations/network-trace/v0.1`        |           |          |                   |              |       X        |
+| `in-toto.io/attestation/runtime-trace/v0.1`          |     X     |          |         X         |      X       |       X        |
+| `witness.testifysec.com/attestation-collection/v0.1` |   \*\*    |   \*\*   |       \*\*        |     \*\*     |      \*\*      |
 
 \*: `command-run/v0.1` only provides information about files opened through the optional `processes[].openedfiles` field.
+
+\*\*: `attestation-collection/v0.1` is a container predicate that holds a list of sub-attestations through the `predicate.attestations[]` field, each of which have their own type field that can be used to satisfy a class of evidence. e.g. `attestation-collection.predicate.attestations[]` having as a member an attestation of type `https://witness.dev/attestations/material/v0.1`. A verifier must therefore recurse into this array to accept/reject the sub-attestations.
 
 ## 6 Attestation Generation
 
