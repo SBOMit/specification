@@ -292,7 +292,7 @@ This chapter describes how attestations are actually generated. (For what an att
 
 SBOMit does not analyze artifacts after a build has completed. Instead, it assumes that evidence is collected while supply chain steps are being performed. This requires a tool that can observe the execution of a supply chain step. The tool must also emit what it observed as an in-toto attestation, signed by the key of the functionary that performed the step. What matters is not any particular tool. What matters is an implementation that can observe activity within a defined boundary and emit the result as a signed in-toto attestation.
 
-[witness](https://github.com/in-toto/witness) is an implementation that currently fills this role. The descriptions in this chapter treat it as a reference implementation. This specification, however, does not depend on witness. Any other implementation that provides the behavior described above may take its place. Witness is referenced here to describe the requirements concretely, not to designate a particular implementation as normative.
+[witness](https://github.com/in-toto/witness) is an implementation that currently fills this role. The descriptions in this chapter treat it as a reference implementation. This specification, however, does not depend on witness. Any other implementation that provides the behavior described above may take its place. witness is referenced here to describe the requirements concretely, not to designate a particular implementation as normative.
 
 witness is an implementation of the in-toto attestation framework. It executes the command corresponding to a supply chain step as a child process. It then collects the activity that occurs during that execution and emits it as a signed attestation. A detailed account of how witness works and how it is used is outside the scope of this specification. Refer to the [witness spec or docs](TBD) for those details.
 
@@ -301,6 +301,26 @@ The attestation boundary is the key consideration here. An attestation records o
 Which kinds of evidence are collected within that boundary depends on the attestors in use. An attestor is a unit that observes a particular type of activity and records it in the attestation. Enabling different attestors yields different evidence for the same command.
 
 ### 6.2 Capturing the Required Evidence
+To support that description with evidence collected during the build, the evidence must answer the following questions.
+
+1. What was produced
+2. What went into producing it
+3. Where those inputs came from
+
+This section defines what evidence must be collected within the attestation. Evidence can be divided into three categories based on when it is recorded. The first category comes from comparing the state before and after the command runs. It shows what served as input and what was produced as output. The second category comes from observing activity while the command is running. It shows which files and resources were accessed during execution.  The third category concerns the environment in which the command ran. It shows where the execution took place.
+
+Each of the following sections describes what is observed for that type of evidence, what qualifies as an entry, and what information an entry must contain. Observation usually detects far more activity than is actually needed. Without a decision about which of that activity to keep as evidence, an attestation does not become meaningful evidence. For example, recording every file accessed during a build would include many entries unrelated to the actual build inputs. Narrowing the criteria too far would leave out actual inputs. Each type of evidence therefore needs defined criteria for what to include.
+
+The descriptions in this section take the evidence that witness currently collects as a starting point. This is not intended to make the current implementation normative.
+
+#### 6.2.1 State before and after execution
+About materials, products
+
+#### 6.2.2 Activity during execution
+About file access, network access
+
+#### 6.2.3 Execution environment
+About environment like CI
 
 ### 6.3 Delegated Builds
 
