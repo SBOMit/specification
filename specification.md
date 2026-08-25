@@ -288,20 +288,25 @@ There are four items in a SBOMit document:
 
 ## 6 Attestation Generation
 ### 6.1 Overview
-
-### 6.1 Overview
-
 This chapter describes how attestations are actually generated. (For what an attestation is expected to contain, see 5.1.1 in-toto attestations.)
 
 SBOMit does not analyze artifacts after a build has completed. Instead, it assumes that evidence is collected while supply chain steps are being performed. This requires a tool that can observe the execution of a supply chain step. The tool must also emit what it observed as an in-toto attestation, signed by the key of the functionary that performed the step. What matters is not any particular tool. What matters is an implementation that can observe activity within a defined boundary and emit the result as a signed in-toto attestation.
 
 [witness](https://github.com/in-toto/witness) is an implementation that currently fills this role. The descriptions in this chapter treat it as a reference implementation. This specification, however, does not depend on witness. Any other implementation that provides the behavior described above may take its place. Witness is referenced here to describe the requirements concretely, not to designate a particular implementation as normative.
 
-Witness is an implementation of the in-toto attestation framework. It executes the command corresponding to a supply chain step as a child process. It then collects the activity that occurs during that execution and emits it as a signed attestation. A detailed account of how witness works and how it is used is outside the scope of this specification. Refer to the [witness spec or docs](TBD) for those details.
+witness is an implementation of the in-toto attestation framework. It executes the command corresponding to a supply chain step as a child process. It then collects the activity that occurs during that execution and emits it as a signed attestation. A detailed account of how witness works and how it is used is outside the scope of this specification. Refer to the [witness spec or docs](TBD) for those details.
 
 The attestation boundary is the key consideration here. An attestation records only the activity that occurs within the execution of the wrapped command. Anything that happens outside that scope does not appear in the attestation. Choosing which command to wrap is therefore not merely a matter of execution convenience. It is a design decision that determines the completeness of the collected evidence.
 
 Which kinds of evidence are collected within that boundary depends on the attestors in use. An attestor is a unit that observes a particular type of activity and records it in the attestation. Enabling different attestors yields different evidence for the same command.
+
+### 6.2 Capturing the Required Evidence
+
+### 6.3 Delegated Builds
+
+### 6.4 Containerized Builds
+
+### 6.5 Example workflow
 
 ## 7 SBOM Generation
 
