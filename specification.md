@@ -326,7 +326,18 @@ About environment like CI
 
 ### 6.4 Containerized Builds
 
-### 6.5 Example workflow
+### 6.5 Example Workflow
+This project observes the steps a user wants to record and generates an SBOM from those records. The decision about which steps to record is left to the user.
+
+Attestation generation generally follows this order. First, decide which step the SBOM is meant to describe. Next, identify the command that performs that step. Finally, wrap that command with a tool such as witness and run it to generate the attestation.
+
+The evidence that gets collected depends on how the wrapped scope is defined. This is because an attestation records only the activity that occurs within the execution of the wrapped command. For example, if dependency downloads happen inside the wrapped scope, the attestation will contain a network record of those downloads. If they are performed beforehand, outside the scope, no network record remains and only file records of the downloaded results are captured. Which approach is appropriate depends on what the SBOM is meant to describe.
+
+#### 6.5.1 Workflow Prerequisites
+About keys, CA, etc...
+
+#### 6.5.2 Example Using Witness
+About witness command to generate attestation
 
 ## 7 SBOM Generation
 
