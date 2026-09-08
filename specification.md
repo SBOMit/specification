@@ -298,16 +298,14 @@ witness is an implementation of the in-toto attestation framework. It executes t
 
 The attestation boundary is the key consideration here. An attestation records only the activity that occurs within the execution of the wrapped command. Anything that happens outside that scope does not appear in the attestation. Choosing which command to wrap is therefore not merely a matter of execution convenience. It is a design decision that determines the completeness of the collected evidence.
 
-Which kinds of evidence are collected within that boundary depends on the attestors in use. An attestor is a unit that observes a particular type of activity and records it in the attestation. Enabling different attestors yields different evidence for the same command.
-
 ### 6.2 Capturing the Required Evidence
 To support that description with evidence collected during the build, the evidence must answer the following questions.
 
 1. What was produced
 2. What went into producing it
-3. Where those inputs came from
+3. Under what conditions the command was executed
 
-This section defines what evidence must be collected within the attestation. Evidence can be divided into three categories based on when it is recorded. The first category comes from comparing the state before and after the command runs. It shows what served as input and what was produced as output. The second category comes from observing activity while the command is running. It shows which files and resources were accessed during execution.  The third category concerns the environment in which the command ran. It shows where the execution took place.
+This section defines what evidence must be collected within the attestation. Evidence can be divided into three categories based on when it is recorded. The first category comes from comparing the state before and after the command runs. It shows what served as input and what was produced as output. The second category comes from observing activity while the command is running. It shows which files and resources were accessed during execution. The third category concerns the environment in which the command ran. It shows where the execution took place.
 
 Each of the following sections describes what is observed for that type of evidence, what qualifies as an entry, and what information an entry must contain. Observation usually detects far more activity than is actually needed. Without a decision about which of that activity to keep as evidence, an attestation does not become meaningful evidence. For example, recording every file accessed during a build would include many entries unrelated to the actual build inputs. Narrowing the criteria too far would leave out actual inputs. Each type of evidence therefore needs defined criteria for what to include.
 
@@ -327,7 +325,6 @@ About environment like CI
 ### 6.4 Containerized Builds
 
 ### 6.5 Example Workflow
-This project observes the steps a user wants to record and generates an SBOM from those records. The decision about which steps to record is left to the user.
 
 Attestation generation generally follows this order. First, decide which step the SBOM is meant to describe. Next, identify the command that performs that step. Finally, wrap that command with a tool such as witness and run it to generate the attestation.
 
