@@ -314,6 +314,55 @@ An important part of generating the SIT is applying the mutator to the output of
 
 It is recommended that the SIT generation tool provides a warning if the mutator modifies (e.g., replaces or removes) portions of the SIT derived from the in-toto information. This is because this will be flagged as a security risk when verification of the SBOMit document is performed.
 
+### 7.2 Artifact Resolution
+
+The materials and products recorded in link metadata, and the artifacts observed by trace attestations, are paths accompanied by secure hashes. An SBOM is expressed in terms of packages and files. Artifact resolution is needed to bridges the two. Resolution proceeds in three stages, in order:
+
+1. **Exclusion.** Artifacts whose paths identify them as properties of the build machine rather than of the software are discarded and play no further part.
+2. **Package resolution.** Artifacts whose paths or network provenance establish a package identity are grouped into package entries, and the files belonging to each resolved package are attributed to it.
+3. **Remainder.** Artifacts that survive both stages are recorded as file entries.
+
+#### 7.2.1 Excluded paths
+
+An artifact is excluded when its path shows it to be a property of the environment in which the build ran. Such artifacts are not absent from the record but they are not components of the software and do not belong in the SBOM. Five categories are excluded:
+
+| Category | Rationale | Representative paths |
+|---|---|---|
+| Operating system and machine state | Describes the host, not the software. Includes kernel pseudo-filesystems, system libraries and headers, system binaries, trust stores, and machine configuration. | `/proc/`, `/sys/`, `/dev/`, `/run/`, `/usr/include/`, `/usr/lib/`, `/usr/share/`, `/usr/bin/`, `/lib/`, `/lib64/`, `/etc/ssl/`, `/etc/hosts`, `/etc/resolv.conf`, `/etc/ld.so.cache`, `/etc/localtime` |
+| Language toolchain installations | The compiler, its standard library source, and build tools are attributes of the build step recorded in the attestation, not dependencies the build resolved. This category is defined by what the directory contains rather than by where it lives, since toolchain managers install to many different locations. | `/usr/local/go/`, `.rustup/toolchains/`, `.local/share/mise/installs/`, `/opt/maven/` |
+| Build-tool scratch and isolation directories | Intermediate state created and consumed by the build tool itself, including compiler caches, link scratch space, compiled output trees, and the isolated environments package managers construct to build a distribution. | `/tmp/go-build`, `/tmp/cgo-`, `/tmp/pip-unpack-`, `/tmp/build-env-`, `target/debug/`, `target/release/`, `.fingerprint/` |
+| Version control, editor, and operating system metadata | Incidental to the working tree and carries no component information. | `.git/`, `.svn/`, `.hg/`, `.idea/`, `.vscode/`, `.DS_Store`, `Thumbs.db`, `.gitconfig`, `.docker/`, `.swp`, `.swo`, `.log`, `.tmp` |
+| Caches that do not carry package content | Derived or transient state stored alongside genuine package caches. Includes compiled bytecode, download scratch, telemetry, and the checksum-transparency-log cache — lookup responses and Merkle tree tiles, which record that a module was *verified* rather than what the module contains. | `__pycache__/`, `.pyc`, `.pyo`, `.cache/`, `.npm/`, `node_modules/.cache/`, `.config/go/telemetry/`, `pkg/mod/cache/download/sumdb/` |
+
+#### 7.2.2 Resolved packages
+
+A package entry requires a resolvable identity: an ecosystem, a name, and a version, together sufficient to create a package URL. The PURL is what allows a component derived from attestations to be recognized as the same component when it also appears in supplemental SBOM information or in output from a conventional scanner, and it is therefore the identity under which entries are deduplicated and merged.
+
+This gives the criterion that separates a package from a file. Package managers record their installations in path layouts, and those layouts fall into two classes: layouts that encode both the name and the version of what they contain, and layouts that encode only the name. Only the first category yields a complete identity from path evidence alone. In the second, the version lives outside the path (sometimes in a lockfile whose *content* the attestation does not capture). Artifacts observed on the filesystem are resolved from the following layouts:
+
+| Ecosystem | Path layout | Name | Version |
+|---|---|---|---|
+| PyPI | `site-packages/` or `dist-packages/` containing `<name>-<version>.dist-info` or `<name>-<version>.egg-info` | normalized per PEP 503 | from the metadata directory |
+| Go | `pkg/mod/<module>@<version>/`, or `pkg/mod/cache/download/<module>/@v/<version>.{mod,zip,info,ziphash}` | module path, with proxy case-escaping decoded | from the path |
+| Cargo | `registry/cache/<name>-<version>.crate`, or `registry/src/.../<name>-<version>/` | crate name, lowercased | from the directory or archive name |
+| npm | `node_modules/.pnpm/<name>@<version>/node_modules/<name>/` | package name, scope preserved | from the pnpm store segment |
+| Maven | `.m2/repository/<group as path>/<artifact>/<version>/` | group and artifact identifiers | from the version directory |
+
+Artifacts may also be resolved from network provenance. Where a attestation records the connections a build made, each connection is attributed to the ecosystem that owns its destination host, and the requests within it are matched against that registry's URL layout. Network evidence additionally establishes where a component came from: the request URL and the address it resolved to are retained as download provenance.
+
+| Ecosystem | Registry hosts | URL layout |
+|---|---|---|
+| Go | `proxy.golang.org`, and the storage backend it redirects to, for which the canonical proxy URL is recovered from the request's referrer | `/<module>/@v/<version>.{zip,mod,info}` |
+| PyPI | `pypi.org`, `files.pythonhosted.org`, `pypi.python.org` | wheel and sdist filenames; `/pypi/<name>/<version>/json` |
+| npm | `registry.npmjs.org`, `npm.pkg.github.com` | `/<name>/-/<name>-<version>.tgz`; `/<name>/<version>` |
+| Cargo | `crates.io`, `static.crates.io`, `index.crates.io` | `/crates/<name>/<name>-<version>.crate`; `/api/v1/crates/<name>/<version>/download` |
+
+A component observed by both means is a single entry. The two forms of evidence are complementary rather than redundant: filesystem evidence establishes that a component was present when the software was built, while network evidence establishes where it was obtained and under what hash it arrived.
+
+#### 7.2.3 Unresolved files
+
+Artifacts that are neither excluded nor resolved into a package are recorded as files. This is the expected outcome for the largest part of a typical build. This includes the project's own source tree, its tests, documentation, and generated assets are components of the software, are correctly described at file granularity, and have no package identity to resolve.
+
 ## 8 SBOM and SIT Conformance
 
 ### 8.1 SIT
