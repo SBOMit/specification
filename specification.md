@@ -314,23 +314,22 @@ All of this evidence is limited to activity observed within the attestation boun
 ### 6.4 Containerized Builds
 
 ### 6.5 Example of Generating an Attestation
-To record build activity with witness, the user first selects the build command to wrap. As described in 6.1, this choice determines the attestation boundary. The user then specifies the attestors to use through the command arguments. In SBOMit, these attestors record the files opened during the build, and the network access made during the build. Running witness requires a Linux kernel that supports the eBPF tracer, the witness binary, and a signing key that the functionary uses to sign the attestation. Recording network access also requires that the CA witness uses to intercept HTTPS traffic is registered in the system trust store before the build runs. Clearing the local dependency cache before the build is recommended. Dependencies that are already in the cache are not downloaded again, so their network access may not be recorded.
 
-The following command shows an example of wrapping the build command of a hypothetical Go project. The available options may change as witness evolves. For installation, CA setup, and command options, refer to the official witness documentation at [witness docs](https://witness.dev/).
+We describe a simple workflow using [witness](https://witness.dev/) for generating an attestation that sufficiently captures information required by SBOMit to identify and detect package identities.
 
 ```bash
-# Wrap the build command and record a signed attestation
-# network-trace : record network access during the build
-# --attestor-command-run-trace-backend ebpf : record files opened during the build
-sudo -E HOME=$HOME PATH=$PATH witness run \
-  --step build \
+witness run \
+  --step build-binary \ # Describe the name of the step.
   --experimental \
-  -a network-trace \
-  --trace --attestor-command-run-trace-backend ebpf \
-  --signer-file-key-path ./signing-key.pem \
-  -o attestation.json \
-  -- go build -o bin/example ./cmd/example
+  -a network-trace \ # Opt-in to the network-trace attestor to capture any go mod fetches.
+  --trace \ # Opt-in to tracing file-system activity. i.e. a set of files opened by the build step.
+  --attestor-command-run-trace-backend=ebpf \
+  --signer-file-key-path ./testkey.pem \ # Public key that's used to sign the attestation.
+  -o build-binary.in-toto.json \ # Store the attestation on disk.
+  -- go build -o bin/example ./cmd/example # Build step that determines the attestation boundary.
 ```
+
+For more information on this example refer to [witness documentation](https://github.com/in-toto/go-witness/).
 
 ## 7 SBOM Generation
 
