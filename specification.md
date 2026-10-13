@@ -314,69 +314,14 @@ All of this evidence is limited to activity observed within the attestation boun
 ### 6.4 Containerized Builds
 
 ### 6.5 Example of Generating an Attestation
-This section shows an example of generating an attestation with witness. The example only illustrates how an attestation is generated. The Go project wrapped in this example is also a hypothetical project used to aid understanding.
+To record build activity with witness, the user first selects the build command to wrap. As described in 6.1, this choice determines the attestation boundary. The user then specifies the attestors to use through the command arguments. In SBOMit, these attestors record the files opened during the build, and the network access made during the build. Running witness requires a Linux kernel that supports the eBPF tracer, the witness binary, and a signing key that the functionary uses to sign the attestation. Recording network access also requires that the CA witness uses to intercept HTTPS traffic is registered in the system trust store before the build runs. Clearing the local dependency cache before the build is recommended. Dependencies that are already in the cache are not downloaded again, so their network access may not be recorded.
 
-#### Prerequisites
-
-The following are required to run the example.
-
-* Linux kernel: The eBPF tracer in witness requires Linux kernel 6.12 or later.
-* witness binary: The `witness` command must be installed and executable.
-* Signing key: witness signs every attestation it generates with the key of the functionary. The signature shows who generated the attestation.
-
-Build tools in most ecosystems keep a local cache of downloaded dependencies. If a dependency is already in the cache, the build does not download it again. In that case, network access for that dependency may not be recorded in the attestation. Clearing the cache is not required. However, clearing the dependency cache before generating the attestation is recommended to record network access more accurately.
-
-#### Choosing the command to wrap
-
-Choosing the command to wrap determines the attestation boundary. As described in 6.1, an attestation records only the activity that occurs during the execution of the wrapped command. The user should wrap the build command that covers the scope they want to record in the attestation. This example wraps the following command.
+The following command shows an example of wrapping the build command of a hypothetical Go project. The available options may change as witness evolves. For installation, CA setup, and command options, refer to the official witness documentation at [witness docs](https://witness.dev/).
 
 ```bash
-# Build command of the example project
-go build -o bin/example ./cmd/example
-```
-
-witness does not determine whether a build succeeds or fails. The result is determined by the wrapped command itself. witness only observes its execution. Therefore, a command that succeeds without witness also succeeds when wrapped with witness, as long as the prerequisites and the steps below are completed.
-
-#### Running witness
-
-Generating an attestation in this example consists of two steps.
-
-**1. Generate and trust the interception CA**
-
-The `network-trace` attestor records network access by placing a MITM proxy between the build and the network. Most dependency downloads use HTTPS. An HTTPS client accepts a connection only if the server certificate is signed by a CA that the client trusts. The proxy presents certificates signed by its own CA. If this CA is not trusted, the build tools reject the connection and every HTTPS request fails. For this reason, the CA must be registered in the system trust store before the build runs.
-
-witness generates this CA the first time the `network-trace` attestor runs. The following command runs witness once only to generate the CA. The wrapped command `/bin/true` does nothing. The attestation from this run is not needed, so it is written to `/dev/null`.
-
-```bash
-# Generate the CA. The wrapped command does nothing.
-sudo -E HOME=$HOME PATH=$PATH witness run \
-  --experimental \
-  --step ca-bootstrap \
-  -a network-trace \
-  --signer-file-key-path ./signing-key.pem \
-  -o /dev/null \
-  -- /bin/true
-```
-
-The CA certificate is created in `./witness_nettrace_proxy/`. The following commands register it in the system trust store.
-
-```bash
-# Copy the CA certificate to the system CA directory
-sudo cp ./witness_nettrace_proxy/ca_cert.pem \
-  /usr/local/share/ca-certificates/witness-nettrace.crt
-
-# Update the system trust store to include the new CA
-sudo update-ca-certificates
-```
-
-Run every subsequent step from this same directory. The default paths of the CA certificate and key are `./witness_nettrace_proxy/`, relative to the current directory. If witness runs from another directory, it generates a new CA that is not in the system trust store.
-
-**2. Record the build attestation**
-
-The following command wraps the build command and records the attestation.
-
-```bash
-# Wrap the build command with witness and record the attestation
+# Wrap the build command and record a signed attestation
+# network-trace : record network access during the build
+# --attestor-command-run-trace-backend ebpf : record files opened during the build
 sudo -E HOME=$HOME PATH=$PATH witness run \
   --step build \
   --experimental \
@@ -386,19 +331,6 @@ sudo -E HOME=$HOME PATH=$PATH witness run \
   -o attestation.json \
   -- go build -o bin/example ./cmd/example
 ```
-
-Each part of the command has the following meaning.
-
-* `--step build`: The name of the supply chain step that this attestation records.
-* `--experimental`: Enables the `network-trace` attestor.
-* `-a network-trace`: Adds the attestor that records network access.
-* `--trace --attestor-command-run-trace-backend ebpf`: Uses the eBPF tracer to record the files opened during the build.
-* `--signer-file-key-path ./signing-key.pem`: The path of the key used to sign the attestation.
-* `-o attestation.json`: The path where the attestation is written.
-* Everything after `--`: The build command to wrap. To wrap a Makefile target, replace it with the target, for example `make build`.
-
-When the command finishes, `attestation.json` contains the signed attestation.
-
 
 ## 7 SBOM Generation
 
