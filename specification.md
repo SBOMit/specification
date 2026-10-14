@@ -167,11 +167,76 @@ The main goal of SBOMit is to construct decentralized trust mechanisms with the 
 
 The following are the high-level steps for deploying the framework, as seen from the viewpoint of an adopter. This is an error-free case:
 
-1. Examination and Candidate Description Creation: A developer, aspiring to fortify their software supply chain and generate an SBOM (or equivalent), runs a specific tool on their constructed software. This tool yields a candidate SBOMit layout for the developer. Although this step is technically optional, it facilitates the ensuing step.
-2. Data Collection through Pipeline Instrumentation: Subsequently, the developer recreates their software release process with an encompassing wrapper that collects software supply chain metadata in in-toto attestations. This method automatically generates cryptographic identities for each host involved in the software supply chain steps. Any discrepancies are relayed to the developer for either approval or inspection.
-3. Data Verification against Policy/Layout: The final stage of the release process is set up as verification. Upon completion, the developer can cryptographically confirm that their supply chain has executed the actions specified in the SBOMit document, through validation on the SBOMit document itself.
+1. **Examination and Candidate Description Creation:** A developer, aspiring to fortify their software supply chain and generate an SBOM (or equivalent), runs a specific tool on their constructed software. This tool yields a candidate SBOMit layout for the developer. Although this step is technically optional, it facilitates the ensuing step.
+2. **Data Collection through Pipeline Instrumentation:** Subsequently, the developer recreates their software release process with an encompassing wrapper that collects software supply chain metadata in in-toto attestations. This method automatically generates cryptographic identities for each host involved in the software supply chain steps. Any discrepancies are relayed to the developer for either approval or inspection.
+3. **Data Verification against Policy/Layout:** The final stage of the release process is set up as verification. Upon completion, the developer can cryptographically confirm that their supply chain has executed the actions specified in the SBOMit document, through validation on the SBOMit document itself.
 
-### 4.1 Involved parties and their roles
+### 4.1 Architecture
+
+The following diagram shows the three operational actors in the SBOMit ecosystem and the data that flows between them during a complete build and verification cycle.
+
+```mermaid
+flowchart LR
+    PO["Project Owner\n(Policy Author)"]
+
+    subgraph BUILD [" Build Phase "]
+        direction TB
+        B["Builder / Functionary\n(CI/CD Pipeline)"]
+        W1["Tracer / Witness\nwitness run"]
+        W2["Collects:\nmaterial, product,\ncommand-run,\nnetwork-trace"]
+        B --> W1
+        W1 --> W2
+    end
+
+    AR["Attestation Store\n(Archivista or\nlocal JSON file)"]
+
+    subgraph GENERATE [" SBOM Generation Phase "]
+        direction TB
+        SG1["SBOMit Generator\nsbomit generate"]
+        SG2["Resolves packages\n(filesystem + network)"]
+        SG3["Enriched SBOM\n(SPDX / CycloneDX)"]
+        SG1 --> SG2
+        SG2 --> SG3
+    end
+
+    subgraph VERIFY [" Verification Phase "]
+        direction TB
+        V1["Verifier / Client\nwitness verify"]
+        V2["Checks layout +\nfunctionary keys +\nmaterial/product chain"]
+        OUT["Verified Enriched SBOM\n(SIT)"]
+        V1 --> V2
+        V2 --> OUT
+    end
+
+    PO -->|"Signed in-toto\npolicy / layout"| BUILD
+    PO -->|"Signed in-toto\npolicy / layout"| VERIFY
+    W2  -->|"Signed attestation\ncollection (DSSE)"| AR
+    AR  -->|"Attestation file"| GENERATE
+    AR  -->|"Attestation\ncollections"| VERIFY
+    SG3 -->|"Enriched SBOM"| VERIFY
+
+    style PO    fill:#4a4e6d,color:#fff,stroke:#7b7fc4
+    style B     fill:#2d6a4f,color:#fff,stroke:#52b788
+    style W1    fill:#1d3557,color:#fff,stroke:#457b9d
+    style W2    fill:#1d3557,color:#fff,stroke:#457b9d
+    style AR    fill:#6b4226,color:#fff,stroke:#bc6c25
+    style SG1   fill:#6b3a6b,color:#fff,stroke:#b56fbf
+    style SG2   fill:#6b3a6b,color:#fff,stroke:#b56fbf
+    style SG3   fill:#6b3a6b,color:#fff,stroke:#b56fbf
+    style V1    fill:#3d405b,color:#fff,stroke:#81b29a
+    style V2    fill:#3d405b,color:#fff,stroke:#81b29a
+    style OUT   fill:#1b4332,color:#fff,stroke:#52b788
+```
+
+> **Key data flows:**
+> - The **Project Owner** defines _who_ is trusted and _what_ steps must be performed by signing an in-toto layout (policy). Both the Builder and the Verifier receive this policy.
+> - The **Tracer** (Witness) instruments each supply chain step as a child process. It collects `material`, `product`, `command-run`, and optionally `network-trace` attestations, signs them as a DSSE envelope, and stores the result.
+> - **SBOMit** reads the signed attestation envelope, applies filesystem and network package resolution, and emits a fully enriched SBOM — a SIT (SBOMit-derived Inventory Template).
+> - The **Verifier** independently reproduces both checks: it re-validates the attestation chain against the layout _and_ accepts the final SIT only if the policy passes.
+
+---
+
+### 4.2 Involved Parties and Their Roles
 
 In the context of SBOMit, a role is a set of duties and actions that an actor must perform.
 
@@ -179,80 +244,207 @@ In the following role descriptions, keep in mind that the framework has been eng
 
 There are three primary roles within the framework:
 
-1. **Project Owner**: This role is entrusted with the task of defining the layout of the software supply chain, serving as the root of trust within the system
-2. **Functionary**: This role performs a step in the generation of SBOMs and furnishes a piece of link metadata as a record demonstrating that such a step was carried out
-3. **Client/Verifier**: This role is responsible for performing verification on the final product by checking the provided layout and link metadata.
+1. **Project Owner**: defines the supply chain policy, serving as the root of trust
+2. **Functionary (Builder)**: executes steps in the supply chain and produces signed link metadata / attestations
+3. **Client / Verifier**: verifies the final product against the layout and optionally generates the enriched SBOM
 
-These roles are further elaborated on below:
+These roles are further elaborated below.
 
-#### 4.1.1 Project Owner
+#### 4.2.1 Project Owner (Policy Author)
 
-As previously outlined, the project owner determines the steps to be performed in the supply chain. For each step, they specify the requirements and the specific public keys that can sign for evidence of the step to ensure compliance and accountability. Additionally, they write the policy (in-toto layout) and the layout file will contain the definition of inspection steps to be executed when verifying the final product.
+The project owner determines the steps to be performed in the supply chain. For each step, they specify the requirements and the specific public keys that can sign for evidence of the step to ensure compliance and accountability. They write the policy in the form of an in-toto layout; the layout file also contains the definition of inspection steps to be executed when verifying the final product.
 
-#### 4.1.2 Functionaries
+The project owner is the root of trust for the entire SBOMit document. Any party wishing to verify an SBOMit document must first obtain and verify the project owner's signed layout.
 
-Functionaries are tasked with performing steps within the supply chain and providing evidence of this by means of link metadata.
+#### 4.2.2 Functionary (Builder)
 
-A functionary is uniquely identified by the public key they use to sign a piece of link metadata, serving as evidence that a step within the supply chain was performed.
+Functionaries, also referred to as **builders** in the context of operational deployments, are tasked with performing steps within the supply chain and providing signed evidence of each step.
 
-A functionary may perform a step or a series of steps (e.g. adds supplemental information that will appear in an SIT) in the supply chain to a third-party via a sublayout. In this scenario, a subset of the steps to be performed is defined by the functionary, who assumes the role of a project owner for this sublayout.
+A functionary is uniquely identified by the public key they use to sign a piece of link metadata or attestation collection, serving as unforgeable evidence that a specific step was performed.
 
-#### 4.1.3 Clients/Verifier
+A functionary may perform a step or a series of steps in the supply chain, or may delegate a subset of steps to a third party via a sublayout. In that scenario, the delegating functionary assumes the role of a project owner for that sublayout.
 
-Clients are either users or automated tools that intend to use the SBOMit.
+**The Tracer (Witness)** is the tool that enables a functionary to collect attestations without modifying the build process itself. Witness wraps the command corresponding to a supply chain step as a child process, observes the activity that occurs during that execution — opened files, spawned processes, network connections — and emits the result as a signed in-toto attestation collection (a DSSE envelope). The attestation boundary is the scope of the wrapped command: anything that happens outside that boundary does not appear in the attestation.
 
-In the final stages of the process, the client performs comprehensive verification of the product. This procedure involves several key steps:
+The attestors that Witness uses to collect evidence, and the predicate types they emit, are:
 
-1. Verification of the layout metadata: The client checks the structure and integrity of the layout to ensure it adheres to the predefined specifications.
+| Witness attestor | Predicate type | Evidence captured |
+|---|---|---|
+| `material` | `witness.dev/attestations/material/v0.1` | Files present _before_ step execution (inputs) |
+| `product` | `witness.dev/attestations/product/v0.1` | Files present _after_ step execution (outputs) |
+| `command-run` | `witness.dev/attestations/command-run/v0.1` | Spawned processes, arguments, exit status; optionally files opened by those processes |
+| `network-trace` | `witness.dev/attestations/network-trace/v0.1` | Outbound network connections, destination hosts and ports, requested URLs |
 
-2. Alignment check between link metadata and layout: This step confirms that the provided link metadata is consistent with the layout detailed in the metadata.
+These are bundled into a single signed `attestation-collection` envelope (predicate type `witness.testifysec.com/attestation-collection/v0.1`) and stored in an attestation registry such as [Archivista](https://github.com/in-toto/archivista), or written to a local JSON file.
 
-3. Execution of inspection steps: The client carries out inspections to verify if the additional metadata and target files comply with the criteria outlined in the layout for this specific inspection step.
+#### 4.2.3 Client / Verifier
 
-4. In-toto layout verification: This involves examining the in-toto layout over the provided in-toto metadata to ensure its consistency and correctness.
+Clients are either users or automated tools that intend to consume and validate the outputs of the supply chain.
 
-5. SIT verification and generation: Each Software Inventory Template (SIT) is checked to ensure it is appropriately signed by the correct SIT generator. Furthermore, each SIT is generated using relevant tooling, facilitating a detailed examination of the mutator behavior. Through these stringent measures, the client can ensure the robustness of the final product, aligning with the high-security standards set by the project.
+In the final stages of the process, the client performs comprehensive verification of the product. This procedure involves:
 
-### 4.2 SBOMit components
+1. **Layout verification:** The client checks the structure and integrity of the in-toto layout and its signature against the trusted project owner key.
+2. **Link / attestation alignment:** The client confirms that the provided attestation collections are consistent with the steps declared in the layout, signed by the expected functionary keys.
+3. **Inspection steps:** The client carries out any inspection steps declared in the layout to verify that the additional metadata and target files comply with the required criteria.
+4. **SIT verification and generation:** Each SIT (SBOMit-derived Inventory Template) is checked to ensure it is signed by the correct SIT generator. The SIT is also independently generated from the attestation data using the relevant tooling to examine the mutator behavior. Any parts of the SIT that the mutator has chosen to overwrite in-toto-derived fields are specifically flagged as a security risk.
+
+---
+
+### 4.3 SBOMit Components
 
 An implementation of SBOMit is composed of four primary components:
 
-1. In-toto Layout Management Tool: Dictates the supply chain policy, including details about keys for each SIT and the SIT generation process. It is signed with a trusted layout key.
-2. In-toto Metadata Collection Tool: Manages a range of in-toto metadata like sub-layouts, link metadata, and attestations, which are validated and signed by the appropriate parties.
-3. SBOM Mutation Tool: Creates metadata for mutating the derived SBOM information to enhance its completeness. The metadata is in ISO or JSON patch format.
-4. Addendum Handling Tool: Handles addendums or modifications, represented as diffs to the previous document sections, preserving historical information. Also uses JSON patch format.
+1. **In-toto Layout Management Tool**: dictates the supply chain policy, including details about keys for each SIT and the SIT generation process. It is signed with a trusted layout key.
+2. **In-toto Metadata Collection Tool**: manages a range of in-toto metadata: sub-layouts, link metadata, and attestations, which are validated and signed by the appropriate parties. [Witness](https://github.com/in-toto/witness) is the reference implementation.
+3. **SBOM Mutation Tool**: creates metadata for mutating the SBOM information derived from in-toto metadata to enhance its completeness. The metadata is in JSON patch format.
+4. **Addendum Handling Tool**: handles addendums or modifications, represented as diffs to the previous document sections, preserving historical information. Also uses JSON patch format.
 
-### 4.3 System Workflow Example
+---
+
+### 4.4 System Workflow Example
 
 ![System Workflow Example](images/image1.png)
 
-#### 4.3.1 Actual Implementation
+#### 4.4.1 Actual Implementation
 
 Step 1: To make an easier adoption path for existing software, the first (optional) step is to generate a candidate layout. To do this, we would utilize a scanning tool like [SBOM X-ray](https://sched.co/182GT) to generate a candidate SBOM or an in-toto layout by inspecting a provided software package or binary. However, we wouldn't fully populate the in-toto layout with functionary keys or detailed verification for link metadata for two reasons. Firstly, we lack accurate knowledge of the materials and products passed between links as we haven't witnessed the earlier parts of the software supply chain in sufficient detail. Secondly, it's better to have keys generated on systems performing the software supply chain steps, so the public keys of the functionaries can't be included in the in-toto layout at this stage.
 
-Step 2: Each step of software creation would be executed with a wrapper script. A registry like [Testify's Archivist](http://github.com/testifysec/archivist) or could be used for data tracking, or the data could be manually copied alongside the software artifact being built. The wrapper script would operate similarly to 'in-toto run,' possibly with an option to generate functionary keys. The script should perform the following for each supply chain step it executes:
+Step 2: Each step of software creation would be executed with a wrapper script. A registry like [Testify's Archivist](http://github.com/testifysec/archivist) could be used for data tracking, or the data could be manually copied alongside the software artifact being built. The wrapper script would operate similarly to `witness run`, possibly with an option to generate functionary keys. The script should perform the following for each supply chain step it executes:
 
 - Capture link metadata for the performed step. Integration of this action in scripts and CI/CD systems is encouraged for consistent performance.
-- Optionally capture environmental information, installed packages, etc. One option is to use runtime trace attestations to gather this information. Again, this could be integrated into scripts for consistent performance.
+- Optionally capture environmental information, installed packages, etc. One option is to use runtime trace attestations to gather this information.
 - Stitch links into the layout as it runs, adding supplemental information into the SBOM areas. This includes matching materials and products from other link steps.
-- Periodically run 'in-toto verify' over the partial Verifiable SBOM to provide immediate feedback to developers, enabling prompt resolution of missing steps and issues. Developers can resolve issues in several ways:
-  1. They can indicate how a step, corresponding to a link, fits into the layout if an error was made by the tooling.
-  2. If the scanning tool missed a step, they can add a link for that step and update the layout accordingly.
-  3. If an expected step in the layout isn't present in the actual project, they can remove it.
-  4. If there's an unexpected or unwanted step in the supply chain, they can modify the project to remove it. Missing steps and information are highlighted, ideally using a visualization tool like [GUAC](https://security.googleblog.com/2022/10/announcing-guac-great-pairing-with-slsa.html), which offers a comprehensive view of the process and mitigates [https://github.com/in-toto/docs/security/advisories/GHSA-p86f-xmg6-9q4x](https://github.com/in-toto/docs/security/advisories/GHSA-p86f-xmg6-9q4x)
-- Depending on the developer or organization's needs, the wrapper could have multiple modes: fail-safe (halting the build if any step is invalid), Notify (providing real-time notifications), and Log (providing a summary of actions after the artifact is packaged).
+- Periodically run `witness verify` over the partial Verifiable SBOM to provide immediate feedback to developers, enabling prompt resolution of missing steps and issues.
+- Depending on the developer or organization's needs, the wrapper could have multiple modes: fail-safe (halting the build if any step is invalid), notify (providing real-time notifications), and log (providing a summary of actions after the artifact is packaged).
 
-Step 3: Set up 'in-toto-verify' to run on the layout and only proceed with the release if it passes. Distribute the link metadata and Verifiable SBOM to end users, potentially via a registry. The method to refer to link metadata and other Verifiable SBOMs can be either via hashed references to an attestation or a bundled file containing everything.
+Step 3: Set up `witness verify` to run on the layout and only proceed with the release if it passes. Distribute the link metadata and Verifiable SBOM to end users, potentially via a registry. The method to refer to link metadata and other Verifiable SBOMs can be either via hashed references to an attestation or a bundled file containing everything.
 
-Stable State: In-toto verification will run every time a release is performed. This provides strong guarantees and should be essentially automatic. If steps change, the Verifiable SBOM's in-toto layout will need modifications, and Step 2 may need to be performed for the new functionary. The Verifiable SBOM can be exported into various SBOM formats, including SPDX, CycloneDX, etc. Any information required for these that aren't needed for an in-toto layout (and thus not used for verification) can be modified independently in the Verifiable SBOM, and the document may be re-signed for authenticity and integrity verification.
+Stable State: In-toto verification will run every time a release is performed. This provides strong guarantees and should be essentially automatic. If steps change, the Verifiable SBOM's in-toto layout will need modifications, and Step 2 may need to be performed for the new functionary. The Verifiable SBOM can be exported into various SBOM formats, including SPDX, CycloneDX, etc.
 
-#### 4.3.2 Use Case Scenarios
+---
 
-1. Large financial corporations and major defense contractors are examples of entities that receive Software Bills of Materials (SBOMs) in the cycloneDX format and require verification of the deliverable's integrity.
+### 4.5 End-to-End Walkthrough: Witness → Enriched SBOM
+
+This section walks through one complete example of the Witness → SBOMit pipeline for a Go project. The purpose is to ground the abstract actor descriptions above in concrete, step-by-step actions.
+
+**Scenario:** A developer maintains a Go service called `myapp`. Their CI pipeline produces a binary from source. They want to generate a cryptographically-verified SBOM that accurately lists all Go module dependencies that were fetched during the build — not just what a scanner thinks might be there.
+
+---
+
+**Step 1: Project Owner signs the in-toto layout (one-time setup)**
+
+The project owner creates an in-toto layout that specifies:
+- Which steps exist in the supply chain (e.g., `clone`, `build`, `test`)
+- Which public key is authorised to sign each step
+- What materials and products are expected at each step
+- Which attestation predicate types are required (see §5.1.3)
+
+The layout is signed with the project owner's private key and distributed to all parties (typically published alongside the software artifact).
+
+```
+# Project owner signs the layout
+witness sign --key owner.key --outfile layout.json layout-unsigned.json
+```
+
+---
+
+**Step 2: Builder instruments the build step with Witness**
+
+The CI pipeline wraps the `go build` command with `witness run`. Witness executes `go build` as a child process and, during that execution, activates the following attestors:
+
+- `material`: records a hash of every file present in the working directory _before_ the build starts (the source tree, `go.mod`, `go.sum`)
+- `command-run`: records the exact command run, its arguments, and exit status; also records opened files
+- `network-trace`: records outbound HTTPS connections to `proxy.golang.org` and the Google module mirror, including the module path and version requested in each URL
+- `product`: records a hash of every file produced _after_ the build completes (the compiled binary, cached module directories)
+
+```bash
+witness run \
+  --step build \
+  --signer-file-key-path functionary.key \
+  --attestors material,command-run,product,network-trace \
+  --outfile build-attestation.json \
+  -- go build -o myapp ./...
+```
+
+Witness emits a single signed DSSE envelope (`build-attestation.json`) containing an `attestation-collection` that bundles all four attestor outputs. The envelope is signed with the functionary's private key.
+
+The same process is repeated for the `go test` step, producing a second attestation (`test-attestation.json`).
+
+---
+
+**Step 3: Attestations are stored**
+
+The two signed attestation files are stored — either pushed to an [Archivista](https://github.com/in-toto/archivista) registry or kept alongside the built artifact as local JSON files. In either case, the files are referenced by their content hash.
+
+---
+
+**Step 4: SBOMit generates the enriched SBOM**
+
+After the build completes, `sbomit generate` is run against the build attestation. It performs the following processing pipeline:
+
+1. **Parse attestations**: reads the `attestation-collection` envelope, extracts all material, product, command-run, and network-trace sub-attestations
+2. **Extract file artifacts**: collects every file path and hash recorded across the attestations
+3. **Apply exclusions**: discards OS files, toolchain paths, build caches, and VCS metadata (see §7.2.1 for the full exclusion table)
+4. **Filesystem package resolution**: identifies Go module paths under `pkg/mod/<module>@<version>/` and maps them to package entries with a PURL (`pkg:golang/<module>@<version>`)
+5. **Network package resolution**: matches recorded `proxy.golang.org` connections to module download URLs; appends `?url=...&ip=...` qualifiers to existing PURLs or creates new entries
+6. **Emit SBOM**: writes the final SBOM document in the requested format (SPDX 2.3 by default)
+
+```bash
+sbomit generate build-attestation.json \
+  --format spdx23 \
+  --name myapp \
+  --output myapp.spdx.json
+```
+
+The resulting `myapp.spdx.json` contains:
+- A root package node (`myapp`)
+- One package node per resolved Go module dependency with ecosystem, name, version, PURL, and download URL/IP from the network trace
+- File nodes for source files that could not be attributed to any package
+
+Optionally, a conventional cataloger output (from Syft or Trivy) can be provided with `--catalog` or `--catalog-file`. SBOMit merges the two: attestation-derived data takes precedence over cataloger-derived data for any matching package (matched by PURL), ensuring the most precise, runtime-observed information is preserved.
+
+---
+
+**Step 5: Verifier checks the supply chain**
+
+Anyone who receives the final artifact and its attestations can verify the entire supply chain:
+
+```bash
+witness verify \
+  --policy layout.json \
+  --policy-verifier-key-file owner.pub \
+  --attestations build-attestation.json \
+  --attestations test-attestation.json \
+  --artifact myapp
+```
+
+Witness verification proceeds as follows:
+
+1. **Policy signature check**: the layout is verified against the project owner's public key
+2. **Step coverage check**: confirms that a signed attestation exists for every step declared in the layout
+3. **Functionary key check**: verifies each attestation's signature against the public key declared for that step in the layout
+4. **Material / product linkage**: confirms that the products of step N match the declared materials of step N+1 (e.g., the binary produced by `build` matches what `test` consumed)
+5. **Policy pass / fail**: if all checks pass, the artifact is accepted; otherwise verification fails with a specific explanation
+
+If verification passes, the consumer has cryptographic assurance that:
+- The source files that entered the build are exactly what was declared
+- The binary was produced by an authorised functionary with the stated tools
+- All Go modules were fetched from the expected registry at the expected versions
+- No step was inserted, skipped, or reordered
+
+The accepted `myapp.spdx.json` is the **enriched SBOM** — a SIT — combining the accuracy of real-time observation with the richness of structured SBOM metadata.
+
+---
+
+#### 4.4.2 Use Case Scenarios
+
+1. Large financial corporations and major defense contractors are examples of entities that receive Software Bills of Materials (SBOMs) in the CycloneDX format and require verification of the deliverable's integrity.
+
 2. In the case of a prominent bank, they require validation of the supply chain security posture of an external build or SBOM generation environment against a specific policy. The attested information relevant to this process is then stored in an SBOMit document.
-3. For major defense contractors, the use case involves the generation of signed SBOMs (cycloneDX) of deliverables across disconnected environments. These SBOMs are subsequently inspected by Security Officers.
-4. In the context of big financial institutions, there's a need to validate the supply chain security posture of an external source in a codified manner. This extra data helps determine whether to trust the external source or SBOM. This could potentially be achieved by examining and attesting to the security posture of the Software Development Life Cycle (SDLC) or tooling used to build the software and SBOM. This attested information would then be referenced in the SBOMit document.
 
+3. For major defense contractors, the use case involves the generation of signed SBOMs (CycloneDX) of deliverables across disconnected environments. These SBOMs are subsequently inspected by Security Officers.
+
+4. In the context of big financial institutions, there's a need to validate the supply chain security posture of an external source in a codified manner. This extra data helps determine whether to trust the external source or SBOM. This could potentially be achieved by examining and attesting to the security posture of the Software Development Life Cycle (SDLC) or tooling used to build the software and SBOM. This attested information would then be referenced in the SBOMit document.
 ## 5 Data Mapping
 
 The final product is the bundle of a series of in-toto attestations, a complete (standard) in-toto layout, and any additional supplemental information that may be required.
