@@ -25,7 +25,7 @@ The SBOMit specification is licensed under the
 
 # Meetings
 
-- **Schedule:** Every Wednesday at 11:00 AM US Eastern Time  
+- **Schedule:** Every Friday at 9:00 AM US Eastern Time  
   📍 [Zoom Meeting Link](https://zoom-lfx.platform.linuxfoundation.org/meeting/94671938246?password=035ca9e9-5194-491c-863b-69b21a596c67)
 
 - **Notes:**  
